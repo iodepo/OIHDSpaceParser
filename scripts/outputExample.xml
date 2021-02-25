@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?xml-stylesheet href='static/style.xsl' type='text/xsl'?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+	<responseDate>2021-02-25T11:00:44Z</responseDate>
+	<request verb="ListRecords" metadataPrefix="oai_dc">http://iodeaquadocs.staging.openrepository.com/oai/request</request>
+
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:iodeaquadocs.staging.openrepository.com:1834/69</identifier>
+				<datestamp>2021-02-17T07:39:07Z</datestamp>
+				<setSpec>com_1834_17812</setSpec>
+				<setSpec>com_1834_17387</setSpec>
+				<setSpec>com_1834_1337</setSpec>
+				<setSpec>col_1834_17813</setSpec>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:doc="http://www.lyncode.com/xoai" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://purl.org/dc/elements/1.1/" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Tuna Data Collection and Processing in Mauritius.</dc:title>
+					<dc:creator>Norungee, D.</dc:creator>
+					<dc:creator>Munbodh, M.</dc:creator>
+					<dc:subject>Tuna fisheries</dc:subject>
+					<dc:subject>Data collections</dc:subject>
+					<dc:subject>Catch/effort</dc:subject>
+					<dc:subject>Length frequency</dc:subject>
+					<dc:subject>ISW, Mauritius</dc:subject>
+					<dc:description>The AFRC has been conducting research on tuna since 1985 with emphasis on the collection of catch/effort data and length frequency data. A computer system for data collection, codification and processing similar to that which was used in the Atlantic Ocean has been set up at AFRC since 1987 by IRD (ORSTOM) scientists in particular Dr Patrice Cayré. Mauritian technicians have been trained to use the system, to collect tuna data and perform the necessary processing to produce various tuna statistical reports.&#xd;
+					'Research Group' Albion Fisheries Research Centre, Mauritius.</dc:description>
+					<dc:description>Published</dc:description>
+					<dc:date>2004-08-30T09:26:58Z</dc:date>
+					<dc:date>2004-08-30T09:26:58Z</dc:date>
+					<dc:date>1998</dc:date>
+					<dc:type>Proceedings Paper</dc:type>
+					<dc:identifier>IOTC Proceedings, 7th Expert Consultation on Indian Ocean Tunas. p. 113-114</dc:identifier>
+					<dc:identifier>http://hdl.handle.net/1834/69</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:format>72650 bytes</dc:format>
+					<dc:format>application/pdf</dc:format>
+					<dc:publisher>IOTC</dc:publisher>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+	<resumptionToken completeListSize="15558" cursor="0">oai_dc////100</resumptionToken>
+	</ListRecords>
+</OAI-PMH>
