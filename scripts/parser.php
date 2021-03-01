@@ -71,12 +71,14 @@ while ($nextRepoUrl != '') {
             $pattern = array(
                 '"',
                 "\n",
-                "\r"
+                "\r",
+                "\t"
             );
             $replace = array(
                 '\"',
-                '',
-                ''
+                ' ',
+                ' ',
+                ' '
             );
             $metaData = $record->metadata->oai_dc_dc;
             $name = trim($metaData->dc_title);
