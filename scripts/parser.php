@@ -211,4 +211,4 @@ while ($nextRepoUrl != '') {
 }
 
 $output = '[' . implode(', ', $outputJSON) . ']';
-file_put_contents('aquadocs.json', $output);
+file_put_contents('../aquadocs.json', $output);
