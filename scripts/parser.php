@@ -340,8 +340,8 @@ while ($nextRepoUrl != '') {
             $JSON .= '
     }';
             $outputJSON[] = $JSON;
-        }
             */
+        }
 
         //make the url for the next page if there is any
         $nextRepoUrl = '';
