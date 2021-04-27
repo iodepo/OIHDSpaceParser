@@ -195,6 +195,7 @@ while ($nextRepoUrl != '') {
             }
             $outputJSON2[] = $JSON;
 
+            /*
             //print "\n*************************\n";
             //print $record->header->identifier . ' ' . $record->header->datestamp . "\n";
 
@@ -340,6 +341,7 @@ while ($nextRepoUrl != '') {
     }';
             $outputJSON[] = $JSON;
         }
+            */
 
         //make the url for the next page if there is any
         $nextRepoUrl = '';
@@ -358,6 +360,8 @@ while ($nextRepoUrl != '') {
     }
 }
 
+/*
 $output = '[' . implode(', ', $outputJSON) . ']';
 file_put_contents('../aquadocs.json', $output);
+*/
 file_put_contents('../aquadocs2.json', json_encode($outputJSON2, JSON_PRETTY_PRINT));
