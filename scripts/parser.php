@@ -16,8 +16,6 @@ $nextRepoUrl = $repoURL;
 $dom = new domDocument();
 $lastPage = false;
 $outputJSON = array();
-$outputJSON2 = array();
-
 
 while ($nextRepoUrl != '') {
     print "\n*************************\n";
@@ -193,7 +191,7 @@ while ($nextRepoUrl != '') {
             ) {
                 $JSON["keywords"] = $keywords;
             }
-            $outputJSON2[] = $JSON;
+            $outputJSON[] = $JSON;
 
             /*
             //print "\n*************************\n";
@@ -364,4 +362,4 @@ while ($nextRepoUrl != '') {
 $output = '[' . implode(', ', $outputJSON) . ']';
 file_put_contents('../aquadocs.json', $output);
 */
-file_put_contents('../aquadocs.json', json_encode($outputJSON2, JSON_PRETTY_PRINT));
+file_put_contents(dirname(__FILE__) . '/aquadocs.json', json_encode($outputJSON, JSON_PRETTY_PRINT));
