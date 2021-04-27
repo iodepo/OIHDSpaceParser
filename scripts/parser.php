@@ -16,6 +16,7 @@ $nextRepoUrl = $repoURL;
 $dom = new domDocument();
 $lastPage = false;
 $outputJSON = array();
+$outputJSON2 = array();
 
 
 while ($nextRepoUrl != '') {
@@ -49,6 +50,151 @@ while ($nextRepoUrl != '') {
         print $oai->responseDate;
 
         foreach ($oai->ListRecords->record as $record) {
+            //print "\n*************************\n";
+            //print $record->header->identifier . ' ' . $record->header->datestamp . "\n";
+
+            //subtract the handle id from the identifier
+            $identifier = $record->header->identifier;
+            $idSuffix = preg_replace(
+                '/.+?:(\d+\/\d+)/',
+                "$1",
+                $identifier
+            );
+
+            //to what (sub)sets belongs this document
+            foreach ($record->header->setSpec as $set) {
+                //print $set . "\n";
+            }
+
+            //read all the metadata and put the values in vars ready for output
+
+            //we often use the same regex
+            $pattern = array(
+                "\n",
+                "\r",
+                "\t"
+            );
+            $replace = array(
+                ' ',
+                ' ',
+                ' '
+            );
+            $metaData = $record->metadata->oai_dc_dc;
+            $name = trim($metaData->dc_title);
+            $name = str_replace(
+                $pattern,
+                $replace,
+                $name
+            );
+
+            //get all the descriptions
+            //put them in one long description
+            $descriptions = array();
+            $descriptionString = '';
+            foreach ($metaData->dc_description as $description) {
+                $description = str_replace(
+                    $pattern,
+                    $replace,
+                    trim($description)
+                );
+                $descriptions[] = ' - ' . $description . ' - ';
+            }
+            $descriptionString = implode(', ', $descriptions);
+
+            //this is the link to the document
+            $url = 'https://www.oceandocs.org/handle/' . $idSuffix;
+
+            //get all the contributors
+            $contributors = array();
+            foreach ($metaData->dc_creator as $contributor) {
+                $contributor = str_replace(
+                    $pattern,
+                    $replace,
+                    trim($contributor)
+                );
+                $contributors[] = $contributor;
+            }
+
+            //get all the keywords
+            $keywords = array();
+            $keywordString = '';
+            foreach ($metaData->dc_subject as $keyword) {
+                $keyword = str_replace(
+                    $pattern,
+                    $replace,
+                    trim($keyword)
+                );
+                $keywords[] = '"' . $keyword . '"';
+            }
+            $keyword = implode(', ', $keywords);
+
+            //special case for contributor
+            $publisher = '';
+            if (isset($metaData->dc_publisher)) {
+                $publisher = $metaData->dc_publisher;
+                $publisher = str_replace(
+                    $pattern,
+                    $replace,
+                    trim($publisher)
+                );
+            }
+
+            $JSON = array(
+                "@context" => array(
+                    "@vocab" =>  "https://schema.org/"
+                ),
+                "@type" => "CreativeWork",
+                "@id" => "$identifier",
+                "name" => "$name",
+                "description" => "$descriptionString",
+                "url" =>  "$url",
+                "identifier" => array(
+                    "@id" => "https://handle.net/$idSuffix",
+                    "@type" => "PropertyValue",
+                    "propertyID" => "https://handle.net/",
+                    "value" => "$idSuffix",
+                    "url" => "https://handle.net/$idSuffix"
+                )
+            );
+
+            $contributors = array();
+            if (isset($contributors)
+                && count($contributors)
+            ) {
+                foreach ($contributors as $contributor) {
+                    array_push(
+                $contributors,
+                         array(
+                            "@type" => "Person",
+                            "name" => "$contributor"
+                        )
+                    );
+                }
+            }
+
+            if (isset($publisher)
+                && $publisher != ''
+            ) {
+                array_push(
+                    $contributors,
+                     array(
+                        "@type" => "Organization",
+                        "name" => "$publisher"
+                    )
+                );
+            }
+
+            if (count($contributors) ) {
+                $JSON['contributor'] = $contributors;
+            }
+
+            if (isset($keywords)
+                && count($keywords)
+            ) {
+                $JSON["keywords"] = $keywords;
+            }
+            $outputJSON2[] = $JSON;
+
             //print "\n*************************\n";
             //print $record->header->identifier . ' ' . $record->header->datestamp . "\n";
 
@@ -214,3 +360,4 @@ while ($nextRepoUrl != '') {
 
 $output = '[' . implode(', ', $outputJSON) . ']';
 file_put_contents('../aquadocs.json', $output);
+file_put_contents('../aquadocs2.json', json_encode($outputJSON2, JSON_PRETTY_PRINT));
