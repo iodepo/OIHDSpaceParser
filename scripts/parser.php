@@ -155,7 +155,6 @@ while ($nextRepoUrl != '') {
                 )
             );
 
-            $contributors = array();
             if (isset($contributors)
                 && count($contributors)
             ) {
