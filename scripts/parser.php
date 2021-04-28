@@ -155,18 +155,35 @@ while ($nextRepoUrl != '') {
                 )
             );
 
+            /*
+             * authors/creators
+             * ODIS Arch expects
+             * "author": {
+             *      "@id": "https://www.sample-data-repository.org/person/51317",
+             *      "@type": "Person",
+             *      "name": "Dr Uta Passow",
+             *      "givenName": "Uta",
+             *      "familyName": "Passow",
+             *      "url": "https://www.sample-data-repository.org/person/51317"
+             * },
+             */
+            $authors = array();
             if (isset($creators)
                 && count($creators)
             ) {
                 foreach ($creators as $creator) {
                     array_push(
-                $creators,
+                $authors,
                          array(
                             "@type" => "Person",
                             "name" => "$creator"
                         )
                     );
                 }
+            }
+
+            if (count($authors) ) {
+                $JSON['author'] = $authors;
             }
 
             $contributors = array();
