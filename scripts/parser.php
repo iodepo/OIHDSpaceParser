@@ -51,7 +51,7 @@ while ($nextRepoUrl != '') {
             //print "\n*************************\n";
             //print $record->header->identifier . ' ' . $record->header->datestamp . "\n";
 
-            //subtract the handle id from the identifier
+            //subtract the handlehandle id from the identifier
             $identifier = $record->header->identifier;
             $idSuffix = preg_replace(
                 '/.+?:(\d+\/\d+)/',
@@ -147,11 +147,11 @@ while ($nextRepoUrl != '') {
                 "description" => "$descriptionString",
                 "url" =>  "$url",
                 "identifier" => array(
-                    "@id" => "https://handle.net/$idSuffix",
+                    "@id" => "http://hdl.handle.net/$idSuffix",
                     "@type" => "PropertyValue",
-                    "propertyID" => "https://handle.net/",
+                    "propertyID" => "http://hdl.handle.net/",
                     "value" => "$idSuffix",
-                    "url" => "https://handle.net/$idSuffix"
+                    "url" => "http://hdl.handle.net/$idSuffix"
                 )
             );
 
