@@ -122,7 +122,7 @@ while ($nextRepoUrl != '') {
                     $replace,
                     trim($keyword)
                 );
-                $keywords[] = '"' . $keyword . '"';
+                $keywords[] = $keyword;
             }
             $keyword = implode(', ', $keywords);
 
