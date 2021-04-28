@@ -102,15 +102,15 @@ while ($nextRepoUrl != '') {
             //this is the link to the document
             $url = 'https://www.oceandocs.org/handle/' . $idSuffix;
 
-            //get all the contributors
-            $contributors = array();
-            foreach ($metaData->dc_creator as $contributor) {
-                $contributor = str_replace(
+            //get all the creators
+            $creators = array();
+            foreach ($metaData->dc_creator as $creator) {
+                $creator = str_replace(
                     $pattern,
                     $replace,
-                    trim($contributor)
+                    trim($creator)
                 );
-                $contributors[] = $contributor;
+                $creators[] = $creator;
             }
 
             //get all the keywords
@@ -155,20 +155,22 @@ while ($nextRepoUrl != '') {
                 )
             );
 
-            if (isset($contributors)
-                && count($contributors)
+            if (isset($creators)
+                && count($creators)
             ) {
-                foreach ($contributors as $contributor) {
+                foreach ($creators as $creator) {
                     array_push(
-                $contributors,
+                $creators,
                          array(
                             "@type" => "Person",
-                            "name" => "$contributor"
+                            "name" => "$creator"
                         )
                     );
                 }
             }
 
+            $contributors = array();
+            //in OIH/ODIS Arch, publishers are seen as contributors
             if (isset($publisher)
                 && $publisher != ''
             ) {
