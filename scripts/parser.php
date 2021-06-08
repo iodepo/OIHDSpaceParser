@@ -241,7 +241,14 @@ $outputGraph = array(
         'CreativeWork'
     ),
     'name' => 'Resource collection for AquaDocs.org',
-    'author' => 'Arno Lambert <a.lambert@unesco.org>',
+    'author' => array(
+        '@type' => 'Person',
+        'name' => 'Arno Lambert',
+        'sameAs' => array(
+            'https://oceanexpert.org/expert/35711',
+            'https://orcid.org/0000-0002-1859-1588'
+        )
+    ),
     'itemListOrder' => 'https://schema.org/ItemListUnordered',
     'numberOfItems' =>  count($outputJSON),
     'itemListElement' => $outputJSON
