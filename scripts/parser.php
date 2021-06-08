@@ -209,7 +209,10 @@ while ($nextRepoUrl != '') {
             ) {
                 $JSON['keywords'] = $keywords;
             }
-            $outputJSON[] = $JSON;
+            $outputJSON[] = array(
+                '@type' => 'ListItem',
+                'item' => $JSON
+            );
         }
 
         //make the url for the next page if there is any
