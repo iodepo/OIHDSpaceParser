@@ -9,11 +9,22 @@ The DSpace OAI interface/api should give you a file like DSpaceOutputExample.xml
 ## installation
 this script should be installed on a server (typically in ***/usr/local/bin***) that has write access to the place where we will serve the resulting json file.
 The installation requires PHP >= 5.6 to be installed (typically in /usr/bin/, if not change the first line of the parser.php file).
+
+### clone the repo
 ```
 cd /usr/local/bin
 git clone git@github.com:iodepo/OIHDSpaceParser.git
 cd /usr/local/bin/OIHDSpaceParser
-git checkout tags/0.1.0
+git checkout tags/1.0.0
+```
+
+### or get the code without git
+```
+cd /usr/local/bin
+mkdir OIHDSpaceParser
+cd OIHDSpaceParser
+wget https://github.com/iodepo/OIHDSpaceParser/archive/refs/tags/1.0.0.tar.gz
+tar xvfz 1.0.0.tar.gz
 ```
 
 Make the script executable
