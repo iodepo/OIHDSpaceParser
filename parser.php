@@ -37,7 +37,6 @@ $longopts  = array(
     "help",
 );
 $options = getopt($shortopts, $longopts);
-var_dump($options);
 
 $helpMessage = <<<EOF
 Usage:
