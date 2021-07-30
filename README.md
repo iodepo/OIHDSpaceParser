@@ -18,7 +18,7 @@ git checkout tags/0.1.0
 
 Make the script executable
 ```
-sudo chmod +x cd /usr/local/bin/OIHDSpaceParser/parser.php
+sudo chmod +x /usr/local/bin/OIHDSpaceParser/parser.php
 ```
 
 At **IODE**, this script is installed on the Wordpress server (mainly because the OIH site is installed there).
