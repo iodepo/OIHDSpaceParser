@@ -1,15 +1,155 @@
 #! /usr/bin/php
 <?php
 /**
- * try to read the OAI interface output from the DSpace for Aquadocs
+ * try to read the OAI interface output from a give DSpace instance
  * and transform the DublinCore stuff into a JSON-LD as defined by the ODIS-Arch project
+ * https://book.oceaninfohub.org/thematics/docs/README.html
  *
  * @author Arno Lambert <a.lambert@unesco.org>
  * @since 24/02/2021
  *
  */
 
-include_once('config.inc.php');
+/*
+ * short arguments that can be given
+    -v : verbose, give more information on the console
+    -q : quiet, give no output on the console
+    -h : show the help
+ */
+$shortopts = "vhq";
+
+/*
+ * long arguments that can be given
+ *
+    --url               (mandatory) url of the DSpace instance, like 'https://aquadocs.org'
+    --metadataPrefix    (mandatory) metadataPrefix, like 'oai_dc'
+    --output            (mandatory) output file with the complete path, like '/var/www/html/oih.aquadocs.org/aquadocs.json
+    --verbose           give more information on the console
+    --quiet             give no output on the console
+    --help              show the help
+ */
+$longopts  = array(
+    "url:",
+    "metadataPrefix:",
+    "output:",
+    "verbose",
+    "quiet",
+    "help",
+);
+$options = getopt($shortopts, $longopts);
+var_dump($options);
+
+$helpMessage = <<<EOF
+Usage:
+/usr/local/bin/OIHDSpaceParser/parser.php /
+    [-v, --verbose] /
+    [-h, --help] /
+    [-q, --quiete] / 
+    --url=https://aquadocs.org /
+    --metadataPrefix=oai_dc /
+    --output=/var/www/html/oih.aquadocs.org/aquadocs.json
+
+Arguments:
+    --url               (mandatory) url of the DSpace instance, like 'https://aquadocs.org'
+    --metadataPrefix    (mandatory) metadataPrefix, like 'oai_dc'
+    --output            (mandatory) output file with the complete path, like '/var/www/html/oih.aquadocs.org/aquadocs.json
+    --verbose, -v       give more information on the console
+    --quiet, -q         give no output on the console
+    --help, -h          show this help
+
+EOF;
+if (isset($options['h'])
+    || isset($options['help'])
+) {
+    print $helpMessage;
+    exit(0);
+}
+
+$verbose = false;
+if (isset($options['v'])
+    || isset($options['verbose'])
+) {
+    $verbose = true;
+}
+
+$quiet = false;
+if (isset($options['q'])
+    || isset($options['quiet'])
+) {
+    //we cannot have both
+    $verbose = false;
+    $quiet = true;
+}
+
+if (isset($options['url'])) {
+    $url = $options['url'];
+    if (!preg_match('/^https?:\/\/.*\w+\.\w+/', $url)) {
+        print "\n\n**************ERROR**************\n";
+        print "we expected a url like 'https://aquadocs.org' or 'http://repository.oceanbestpractices.org' and got '$url'\n";
+        exit(1);
+    }
+    if (!preg_match('/\/$/', $url)) {
+        $url .= '/';
+    }
+    $repoURL = $url . 'oai/request?verb=ListRecords';
+} else {
+    print "\n\n**************ERROR**************\n we really need a url (https://test.com) to continue\n\n";
+    print $helpMessage;
+    exit(1);
+}
+
+if (isset($options['metadataPrefix'])) {
+    $metadataPrefix = $options['metadataPrefix'];
+    if (!preg_match('/^[\w\_\-]+$/', $metadataPrefix)) {
+        print "\n\n**************ERROR**************\n";
+        print "we expected a metadataPrefix like 'oai_dc' and got '$metadataPrefix'\n";
+        exit(1);
+    }
+    $repoURL .= '&metadataPrefix=' . $metadataPrefix;
+} else {
+    print "\n\n**************ERROR**************\n we really need a metadataPrefix to continue\n\n";
+    print $helpMessage;
+    exit(1);
+}
+
+if (isset($options['output'])) {
+    $output = $options['output'];
+    try {
+        $outputPath = dirname($output);
+    } catch (Exception $e) {
+        print "\n\n**************ERROR**************\n";
+        print "the path to the output file ('$outputPath') does not exist\n";
+        print $e->getMessage() . "\n";
+        exit(1);
+    }
+    if (!is_dir($outputPath)) {
+        print "\n\n**************ERROR**************\n";
+        print "the path to the output file ('$outputPath') does not exist\n";
+        exit(1);
+    }
+    if (!is_writable($outputPath)) {
+        print "\n\n**************ERROR**************\n";
+        print "the path to the output file ('$outputPath') is not writable\n";
+        exit(1);
+    }
+    if (file_exists($output)
+        && !is_writable($output)
+        ) {
+        print "\n\n**************ERROR**************\n";
+        print "the output file ('$output') is not writable\n";
+        exit(1);
+    }
+} else {
+    print "\n\n**************ERROR**************\n we really need a output file name (--output=/complete/path/filename.ext) to continue\n\n";
+    print $helpMessage;
+    exit(1);
+}
+
+if ($verbose) {
+    print "we will use '$repoURL' to get the info\n";
+    print "the output json will be written to '$output'\n";
+}
+
 $nextRepoUrl = $repoURL;
 
 //read the content of the page
@@ -17,9 +157,12 @@ $dom = new domDocument();
 $lastPage = false;
 $outputJSON = array();
 
+$count = 0;
 while ($nextRepoUrl != '') {
-    print "\n*************************\n";
-    print "$nextRepoUrl \n";
+    if ($verbose) {
+        print "\n*************************\n";
+        print "$nextRepoUrl \n";
+    }
 
     /*
      * get the complete page in one long string
@@ -45,11 +188,16 @@ while ($nextRepoUrl != '') {
         //file_put_contents('output.xml', $page);
         $oai = new SimpleXMLElement($page);
 
-        print $oai->responseDate;
+        if ($verbose) {
+            print $oai->responseDate;
+        }
 
         foreach ($oai->ListRecords->record as $record) {
-            //print "\n*************************\n";
-            //print $record->header->identifier . ' ' . $record->header->datestamp . "\n";
+            $count ++;
+            if ($verbose) {
+                print "\n*************************\n";
+                print $record->header->identifier . ' ' . $record->header->datestamp . "\n";
+            }
 
             //subtract the handle id from the identifier
             $identifier = $record->header->identifier;
@@ -61,7 +209,9 @@ while ($nextRepoUrl != '') {
 
             //to what (sub)sets belongs this document
             foreach ($record->header->setSpec as $set) {
-                //print $set . "\n";
+                if ($verbose) {
+                    print $set . "\n";
+                }
             }
 
             //read all the metadata and put the values in vars ready for output
@@ -232,6 +382,10 @@ while ($nextRepoUrl != '') {
     }
 }
 
+if ($verbose) {
+    print "\n$count documents found and parsed\n";
+}
+
 $outputGraph = array(
     '@context' => array(
         '@vocab' =>  'https://schema.org/'
@@ -255,9 +409,13 @@ $outputGraph = array(
 );
 //finally save the file to be accessed
 file_put_contents(
-        dirname(__FILE__) . '/../aquadocs.json',
+        $output,
         json_encode(
                 $outputGraph,
                 JSON_PRETTY_PRINT
         )
 );
+
+if ($verbose) {
+    print "\n********--- done ---*******\n";
+}
