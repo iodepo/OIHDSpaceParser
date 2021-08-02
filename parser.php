@@ -16,7 +16,7 @@
     -q : quiet, give no output on the console
     -h : show the help
  */
-$shortopts = "vhq";
+$shortOptions = "vhq";
 
 /*
  * long arguments that can be given
@@ -28,7 +28,7 @@ $shortopts = "vhq";
     --quiet             give no output on the console
     --help              show the help
  */
-$longopts  = array(
+$longOptions  = array(
     "url:",
     "metadataPrefix:",
     "output:",
@@ -36,14 +36,14 @@ $longopts  = array(
     "quiet",
     "help",
 );
-$options = getopt($shortopts, $longopts);
+$options = getopt($shortOptions, $longOptions);
 
 $helpMessage = <<<EOF
 Usage:
 /usr/local/bin/OIHDSpaceParser/parser.php /
     [-v, --verbose] /
     [-h, --help] /
-    [-q, --quiete] / 
+    [-q, --quiet] / 
     --url=https://aquadocs.org /
     --metadataPrefix=oai_dc /
     --output=/var/www/html/oih.aquadocs.org/aquadocs.json
@@ -84,7 +84,7 @@ if (isset($options['url'])) {
     $url = $options['url'];
     if (!preg_match('/^https?:\/\/.*\w+\.\w+/', $url)) {
         print "\n\n**************ERROR**************\n";
-        print "we expected a url like 'https://aquadocs.org' or 'http://repository.oceanbestpractices.org' and got '$url'\n";
+        print "we expected a url like 'https://aquadocs.org' or 'https://repository.oceanbestpractices.org' and got '$url'\n";
         exit(1);
     }
     if (!preg_match('/\/$/', $url)) {
@@ -99,7 +99,7 @@ if (isset($options['url'])) {
 
 if (isset($options['metadataPrefix'])) {
     $metadataPrefix = $options['metadataPrefix'];
-    if (!preg_match('/^[\w\_\-]+$/', $metadataPrefix)) {
+    if (!preg_match('/^[\w_\-]+$/', $metadataPrefix)) {
         print "\n\n**************ERROR**************\n";
         print "we expected a metadataPrefix like 'oai_dc' and got '$metadataPrefix'\n";
         exit(1);
@@ -113,6 +113,7 @@ if (isset($options['metadataPrefix'])) {
 
 if (isset($options['output'])) {
     $output = $options['output'];
+    $outputPath = '';
     try {
         $outputPath = dirname($output);
     } catch (Exception $e) {
