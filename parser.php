@@ -226,142 +226,147 @@ while ($nextRepoUrl != '') {
                 ' ',
                 ' '
             );
-            $metaData = $record->metadata->oai_dc_dc;
-            $name = trim($metaData->dc_title);
-            $name = str_replace(
-                $pattern,
-                $replace,
-                $name
-            );
-
-            //get all the descriptions
-            //put them in one long description
-            $descriptions = array();
-            $descriptionString = '';
-            foreach ($metaData->dc_description as $description) {
-                $description = str_replace(
+            try {
+                $metaData = $record->metadata->oai_dc_dc;
+                $name = trim($metaData->dc_title);
+                $name = str_replace(
                     $pattern,
                     $replace,
-                    trim($description)
+                    $name
                 );
-                $descriptions[] = ' - ' . $description . ' - ';
-            }
-            $descriptionString = implode(', ', $descriptions);
 
-            //this is the link to the document
-            $url = 'https://www.oceandocs.org/handle/' . $idSuffix;
+                //get all the descriptions
+                //put them in one long description
+                $descriptions = array();
+                $descriptionString = '';
+                foreach ($metaData->dc_description as $description) {
+                    $description = str_replace(
+                        $pattern,
+                        $replace,
+                        trim($description)
+                    );
+                    $descriptions[] = ' - ' . $description . ' - ';
+                }
+                $descriptionString = implode(', ', $descriptions);
 
-            //get all the creators
-            $creators = array();
-            foreach ($metaData->dc_creator as $creator) {
-                $creator = str_replace(
-                    $pattern,
-                    $replace,
-                    trim($creator)
+                //this is the link to the document
+                $url = 'https://www.oceandocs.org/handle/' . $idSuffix;
+
+                //get all the creators
+                $creators = array();
+                foreach ($metaData->dc_creator as $creator) {
+                    $creator = str_replace(
+                        $pattern,
+                        $replace,
+                        trim($creator)
+                    );
+                    $creators[] = $creator;
+                }
+
+                //get all the keywords
+                $keywords = array();
+                $keywordString = '';
+                foreach ($metaData->dc_subject as $keyword) {
+                    $keyword = str_replace(
+                        $pattern,
+                        $replace,
+                        trim($keyword)
+                    );
+                    $keywords[] = $keyword;
+                }
+                $keyword = implode(', ', $keywords);
+
+                //special case for contributor
+                $publisher = '';
+                if (isset($metaData->dc_publisher)) {
+                    $publisher = $metaData->dc_publisher;
+                    $publisher = str_replace(
+                        $pattern,
+                        $replace,
+                        trim($publisher)
+                    );
+                }
+
+                $JSON = array(
+                    '@context' => array(
+                        '@vocab' => 'https://schema.org/'
+                    ),
+                    '@type' => 'CreativeWork',
+                    '@id' => "$identifier",
+                    'name' => "$name",
+                    'description' => "$descriptionString",
+                    'url' => "$url",
+                    'identifier' => array(
+                        '@id' => "https://hdl.handle.net/$idSuffix",
+                        '@type' => 'PropertyValue',
+                        'propertyID' => 'https://hdl.handle.net/',
+                        'value' => "$idSuffix",
+                        'url' => "https://hdl.handle.net/$idSuffix"
+                    )
                 );
-                $creators[] = $creator;
-            }
 
-            //get all the keywords
-            $keywords = array();
-            $keywordString = '';
-            foreach ($metaData->dc_subject as $keyword) {
-                $keyword = str_replace(
-                    $pattern,
-                    $replace,
-                    trim($keyword)
-                );
-                $keywords[] = $keyword;
-            }
-            $keyword = implode(', ', $keywords);
+                /*
+                 * authors/creators
+                 * ODIS Arch expects
+                 * 'author': {
+                 *      '@id': 'https://www.sample-data-repository.org/person/51317',
+                 *      '@type': 'Person',
+                 *      'name': 'Dr Uta Passow',
+                 *      'givenName': 'Uta',
+                 *      'familyName': 'Passow',
+                 *      'url': 'https://www.sample-data-repository.org/person/51317'
+                 * },
+                 */
+                $authors = array();
+                if (isset($creators)
+                    && count($creators)
+                ) {
+                    foreach ($creators as $creator) {
+                        array_push(
+                            $authors,
+                            array(
+                                '@type' => 'Person',
+                                'name' => "$creator"
+                            )
+                        );
+                    }
+                }
 
-            //special case for contributor
-            $publisher = '';
-            if (isset($metaData->dc_publisher)) {
-                $publisher = $metaData->dc_publisher;
-                $publisher = str_replace(
-                    $pattern,
-                    $replace,
-                    trim($publisher)
-                );
-            }
+                if (count($authors)) {
+                    $JSON['author'] = $authors;
+                }
 
-            $JSON = array(
-                '@context' => array(
-                    '@vocab' =>  'https://schema.org/'
-                ),
-                '@type' => 'CreativeWork',
-                '@id' => "$identifier",
-                'name' => "$name",
-                'description' => "$descriptionString",
-                'url' =>  "$url",
-                'identifier' => array(
-                    '@id' => "https://hdl.handle.net/$idSuffix",
-                    '@type' => 'PropertyValue',
-                    'propertyID' => 'https://hdl.handle.net/',
-                    'value' => "$idSuffix",
-                    'url' => "https://hdl.handle.net/$idSuffix"
-                )
-            );
-
-            /*
-             * authors/creators
-             * ODIS Arch expects
-             * 'author': {
-             *      '@id': 'https://www.sample-data-repository.org/person/51317',
-             *      '@type': 'Person',
-             *      'name': 'Dr Uta Passow',
-             *      'givenName': 'Uta',
-             *      'familyName': 'Passow',
-             *      'url': 'https://www.sample-data-repository.org/person/51317'
-             * },
-             */
-            $authors = array();
-            if (isset($creators)
-                && count($creators)
-            ) {
-                foreach ($creators as $creator) {
+                $contributors = array();
+                //in OIH/ODIS Arch, publishers are seen as contributors
+                if (isset($publisher)
+                    && $publisher != ''
+                ) {
                     array_push(
-                $authors,
-                         array(
-                            '@type' => 'Person',
-                            'name' => "$creator"
+                        $contributors,
+                        array(
+                            '@type' => 'Organization',
+                            'name' => "$publisher"
                         )
                     );
                 }
-            }
 
-            if (count($authors) ) {
-                $JSON['author'] = $authors;
-            }
+                if (count($contributors)) {
+                    $JSON['contributor'] = $contributors;
+                }
 
-            $contributors = array();
-            //in OIH/ODIS Arch, publishers are seen as contributors
-            if (isset($publisher)
-                && $publisher != ''
-            ) {
-                array_push(
-                    $contributors,
-                     array(
-                        '@type' => 'Organization',
-                        'name' => "$publisher"
-                    )
+                if (isset($keywords)
+                    && count($keywords)
+                ) {
+                    $JSON['keywords'] = $keywords;
+                }
+                $outputJSON[] = array(
+                    '@type' => 'ListItem',
+                    'item' => $JSON
                 );
+            } catch (Exception $e) {
+                $handle = 'https://repository.oceanbestpractices.org/handle/' . $identifier;
+                print "no info found for $handle\n";
             }
-
-            if (count($contributors) ) {
-                $JSON['contributor'] = $contributors;
-            }
-
-            if (isset($keywords)
-                && count($keywords)
-            ) {
-                $JSON['keywords'] = $keywords;
-            }
-            $outputJSON[] = array(
-                '@type' => 'ListItem',
-                'item' => $JSON
-            );
         }
 
         //make the url for the next page if there is any
