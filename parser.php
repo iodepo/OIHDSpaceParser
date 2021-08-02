@@ -230,7 +230,7 @@ while ($nextRepoUrl != '') {
                 $metaData = $record->metadata->oai_dc_dc;
 
                 if (!is_object($metaData)) {
-                    $handle = 'https://repository.oceanbestpractices.org/handle/' . $identifier;
+                    $handle = 'https://repository.oceanbestpractices.org/handle/' . $idSuffix;
                     print "no info found for $handle\n";
                     continue;
                 }
@@ -370,7 +370,7 @@ while ($nextRepoUrl != '') {
                     'item' => $JSON
                 );
             } catch (Exception $e) {
-                $handle = 'https://repository.oceanbestpractices.org/handle/' . $identifier;
+                $handle = 'https://repository.oceanbestpractices.org/handle/' . $idSuffix;
                 print "no info found for $handle\n";
             }
         }
