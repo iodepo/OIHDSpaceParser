@@ -232,7 +232,7 @@ while ($nextRepoUrl != '') {
             if (isset($record->header)
                 && ($record->header->attributes() !== null)
                 && isset($record->header->attributes()->status)
-                && $record->header->attributes()->status === 'deleted'
+                && $record->header->attributes()->status == 'deleted'
             ) {
                 if ($verbose) {
                     print "$handle has been deleted, ignoring\n";
