@@ -205,6 +205,7 @@ while ($nextRepoUrl != '') {
                 "$1",
                 $identifier
             );
+            $handle = 'https://repository.oceanbestpractices.org/handle/' . $idSuffix;
 
             //to what (sub)sets belongs this document
             foreach ($record->header->setSpec as $set) {
@@ -226,13 +227,25 @@ while ($nextRepoUrl != '') {
                 ' ',
                 ' '
             );
+
+            if (isset($record->header)
+                && isset($record->header->attributes())
+                && isset($record->header->attributes()->status)
+                && $record->header->attributes()->status === 'deleted'
+            ) {
+                if ($verbose) {
+                    print "$handle has been deleted, ignoring\n";
+                }
+                continue;
+            }
+
             $metaData = $record->metadata->oai_dc_dc;
 
             if (!is_object($metaData)) {
-                $handle = 'https://repository.oceanbestpractices.org/handle/' . $idSuffix;
                 print "no info found for $handle\n";
                 continue;
             }
+
             $name = trim($metaData->dc_title);
             $name = str_replace(
                 $pattern,
