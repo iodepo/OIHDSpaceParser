@@ -229,7 +229,7 @@ while ($nextRepoUrl != '') {
             );
 
             if (isset($record->header)
-                && isset($record->header->attributes())
+                && ($record->header->attributes() !== null)
                 && isset($record->header->attributes()->status)
                 && $record->header->attributes()->status === 'deleted'
             ) {
