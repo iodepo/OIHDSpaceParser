@@ -228,6 +228,12 @@ while ($nextRepoUrl != '') {
             );
             try {
                 $metaData = $record->metadata->oai_dc_dc;
+
+                if (!is_object($metaData)) {
+                    $handle = 'https://repository.oceanbestpractices.org/handle/' . $identifier;
+                    print "no info found for $handle\n";
+                    continue;
+                }
                 $name = trim($metaData->dc_title);
                 $name = str_replace(
                     $pattern,
