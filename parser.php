@@ -90,6 +90,7 @@ if (isset($options['url'])) {
     if (!preg_match('/\/$/', $url)) {
         $url .= '/';
     }
+    $originalUrl = $url;
     $repoURL = $url . 'oai/request?verb=ListRecords';
 } else {
     print "\n\n**************ERROR**************\n we really need a url (https://test.com) to continue\n\n";
@@ -413,7 +414,7 @@ $outputGraph = array(
         'ItemList',
         'CreativeWork'
     ),
-    'name' => 'Resource collection for ' . $url,
+    'name' => 'Resource collection for ' . $originalUrl,
     'author' => array(
         '@type' => 'Person',
         'name' => 'Arno Lambert',
