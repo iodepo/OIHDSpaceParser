@@ -413,7 +413,7 @@ $outputGraph = array(
         'ItemList',
         'CreativeWork'
     ),
-    'name' => 'Resource collection for AquaDocs.org',
+    'name' => 'Resource collection for ' . $url,
     'author' => array(
         '@type' => 'Person',
         'name' => 'Arno Lambert',
