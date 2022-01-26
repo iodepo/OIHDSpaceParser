@@ -90,7 +90,7 @@ if (isset($options['url'])) {
     if (!preg_match('/\/$/', $url)) {
         $url .= '/';
     }
-    $originalUrl = $url;
+    $originalURL = $url;
     $repoURL = $url . 'oai/request?verb=ListRecords';
 } else {
     print "\n\n**************ERROR**************\n we really need a url (https://test.com) to continue\n\n";
@@ -270,7 +270,7 @@ while ($nextRepoUrl != '') {
             $descriptionString = implode(', ', $descriptions);
 
             //this is the link to the document
-            $url = 'https://www.oceandocs.org/handle/' . $idSuffix;
+            $completeURL = $url . $idSuffix;
 
             //get all the creators
             $creators = array();
@@ -315,7 +315,7 @@ while ($nextRepoUrl != '') {
                 '@id' => "$identifier",
                 'name' => "$name",
                 'description' => "$descriptionString",
-                'url' => "$url",
+                'url' => "$completeURL",
                 'identifier' => array(
                     '@id' => "https://hdl.handle.net/$idSuffix",
                     '@type' => 'PropertyValue',
@@ -414,7 +414,7 @@ $outputGraph = array(
         'ItemList',
         'CreativeWork'
     ),
-    'name' => 'Resource collection for ' . $originalUrl,
+    'name' => 'Resource collection for ' . $originalURL,
     'author' => array(
         '@type' => 'Person',
         'name' => 'Arno Lambert',
