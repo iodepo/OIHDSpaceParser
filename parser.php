@@ -1,7 +1,7 @@
 #! /usr/bin/php
 <?php
 /**
- * try to read the OAI interface output from a give DSpace instance
+ * try to read the OAI interface output from a given DSpace instance
  * and transform the DublinCore stuff into a JSON-LD as defined by the ODIS-Arch project
  * https://book.oceaninfohub.org/thematics/docs/README.html
  *
@@ -141,7 +141,7 @@ if (isset($options['output'])) {
         exit(1);
     }
 } else {
-    print "\n\n**************ERROR**************\n we really need a output file name (--output=/complete/path/filename.ext) to continue\n\n";
+    print "\n\n**************ERROR**************\n we really need an output file name (--output=/complete/path/filename.ext) to continue\n\n";
     print $helpMessage;
     exit(1);
 }
