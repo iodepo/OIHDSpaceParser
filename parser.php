@@ -92,6 +92,7 @@ if (isset($options['url'])) {
     }
     $originalURL = $url;
     $repoURL = $url . 'oai/request?verb=ListRecords';
+    $handleURL = preg_replace('/(.+?\.org\/).*/', '$1', $url) . 'handle/';
 } else {
     print "\n\n**************ERROR**************\n we really need a url (https://test.com) to continue\n\n";
     print $helpMessage;
@@ -270,7 +271,7 @@ while ($nextRepoUrl != '') {
             $descriptionString = implode(', ', $descriptions);
 
             //this is the link to the document
-            $completeURL = $url . $idSuffix;
+            $completeURL = $handleURL . $idSuffix;
 
             //get all the creators
             $creators = array();
